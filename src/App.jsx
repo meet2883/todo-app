@@ -1,6 +1,7 @@
-import { Component } from "react";
+import { Component, createContext } from "react";
 import axios from "axios";
 import Card from "./components/Card";
+import DisplayTodo from "./components/DisplayTodo";
 
 
 class App extends Component{
@@ -35,7 +36,7 @@ class App extends Component{
       await axios.get("http://localhost:3000/todos")
                   .then(res => {
                       this.setState({ todos : res.data });
-                      console.log(res)
+                      // console.log(res)
                     })
                   .catch(err => console.log(err))
     } catch (error) {
@@ -75,18 +76,19 @@ class App extends Component{
   }
 
   componentDidUpdate = (prevProps, prevState) => {
-    // if(prevProps.todos !== this.state.todos){
-    //   console.log("Todos are changed, fetching updated list...");
-    //   this.fetchTodoList();
-    // }
+   
   }
 
   render(){
     return(
       <div className="flex flex-col gap-6 max-w-screen-sm mx-auto py-5">
         <h1 className="text-2xl font-bold text-center">Todo List</h1>
+
         {/* todo input part */}
-        <form onSubmit={this.handleSubmit} className="flex flex-col items-center gap-4">
+        <form 
+          onSubmit={this.handleSubmit} 
+          className="flex flex-col items-center gap-4"
+        >
           <div className="flex flex-col w-full gap-1">
             <span>Title</span>
             <input 
@@ -108,30 +110,19 @@ class App extends Component{
               onChange={(e) => this.handleChange(e)} 
             />
           </div>
-          <button type="submit" className="border border-none bg-blue-800 w-24 h-11 rounded-sm font-bold text-white">
+          <button 
+            type="submit" 
+            className="border border-none bg-blue-800 w-24 h-11 rounded-sm font-bold text-white"
+          >
             Add
           </button>
         </form>
 
         {/* todo's card list */}
-        <div className="grid grid-cols-3 gap-3">
-          {/* todo card */}
-          {
-            this.state.todos?.map(todo => (
-              <div 
-                key={todo?.id}
-                className="flex flex-col gap-2 border-2 border-white bg-white rounded-md max-w-56 p-2 drop-shadow-lg"
-              >
-                <Card 
-                  title={todo?.title} 
-                  task={todo?.task} 
-                  id={todo?.id} 
-                  deleteTodo={this.deleteTodof}
-                />
-              </div>
-            ))
-          }
-        </div>
+        <DisplayTodo 
+          todos={this.state.todos} 
+          deleteTodo={this.deleteTodo}
+        />
       </div>
     )
   }
