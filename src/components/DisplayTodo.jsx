@@ -46,7 +46,7 @@ class DisplayTodo extends Component{
 
     render(){
         const { searchResults } = this.state;
-        const { todos, deleteTodo } = this.props;
+        const { todos, deleteTodo, fetchTodo } = this.props;
         const data = ( searchResults.length > 0 ) ? searchResults : todos;
 
         return(
@@ -83,22 +83,19 @@ class DisplayTodo extends Component{
                 </form>
 
                 {/* todo cards List */}
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 mx-auto gap-2">
                     {
                         data?.map((todo) => {
                             const { id, title, task} = todo;
                             return (
-                                <div 
+                                <Card 
                                     key={id}
-                                    className="flex flex-col gap-2 border-2 border-white bg-white rounded-md max-w-56 p-2 drop-shadow-lg"
-                                >
-                                    <Card 
-                                        title={title}
-                                        id={id}
-                                        task={task}
-                                        deleteTodo={deleteTodo}
-                                    />
-                                </div>
+                                    title={title}
+                                    id={id}
+                                    task={task}
+                                    deleteTodo={deleteTodo}
+                                    fetchTodo={fetchTodo}
+                                />
                             )
                         })
                     }
