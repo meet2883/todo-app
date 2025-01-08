@@ -9,7 +9,8 @@ class Home extends Component{
           title : "",
           task : "",
           isTitleEmpty : false,
-          isTaskEmpty : false
+          isTaskEmpty : false,
+          status : "To-do"
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -58,7 +59,8 @@ class Home extends Component{
             const response = await axios.post("http://localhost:3000/todos", { 
                 title : this.state.title, 
                 task : this.state.task,
-                createdAt : createDate 
+                createdAt : createDate,
+                status :  this.state.status
             })
             
             this.setState((prevState) => ({
@@ -92,7 +94,7 @@ class Home extends Component{
     }
     
     render(){
-        const { task, title, isTaskEmpty, isTitleEmpty } = this.state;
+        const { task, title, isTaskEmpty, isTitleEmpty, status } = this.state;
         return(
             <div className="flex flex-col gap-6 max-w-screen-sm mx-auto py-5">
                  <Link to={"/list"} className="underline-offset-4">Lists</Link>
@@ -115,6 +117,7 @@ class Home extends Component{
                         />
                         {isTitleEmpty && (<small className="text-red-700">please add the title</small>)}
                     </div>
+
                     <div className="flex flex-col w-full gap-1">
                         <span>Task</span>
                         <textarea 
@@ -126,6 +129,22 @@ class Home extends Component{
                         />
                         {isTaskEmpty && (<small className="text-red-700">please add the task</small>)}
                     </div>
+
+                    <div className="flex flex-col w-full gap-1">
+                        <span>Status</span>
+                        <select 
+                            name="status" 
+                            value={status} 
+                            id="" 
+                            className="border-2 rounded-md  py-2 px-4"
+                            onChange={(e) => this.handleChange(e)}
+                        >
+                            <option value="To-do">To-do</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+
                     <button 
                         type="submit" 
                         className="border border-none bg-blue-800 w-24 h-11 rounded-sm font-bold text-white"

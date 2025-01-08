@@ -6,10 +6,20 @@ class Card extends Component{
         super(props);
     }
     render(){
-        const { deleteTodo, fetchTodo, title, task, id } = this.props;
+
+        const { 
+            deleteTodo, 
+            fetchTodo, 
+            title, 
+            task, 
+            id, 
+            createdAt,
+            status,
+            updatedDate 
+        } = this.props;
         return(
             <div
-                className="border-2 border-white bg-white rounded-xl w-80 h-32 p-2 drop-shadow-lg"
+                className="flex flex-col border-2 border-white bg-white rounded-xl w-80 h-32 p-2 drop-shadow-lg"
             >
                 <div className="flex items-center justify-between">
                     <h1 className="font-bold text-lg">{title}</h1>
@@ -28,6 +38,10 @@ class Card extends Component{
                     </div>
                 </div>
                 <p className="text-sm">{task}</p>
+                <p className="text-sm">Status : {status}</p>
+                <small>created at : {createdAt}</small>
+                { updatedDate && ( <small>updated at : {updatedDate}</small>)}
+               
             </div>
         )
     }

@@ -1,56 +1,70 @@
 {
   "todos": [
     {
-      "id": "c863",
-      "title": "Task 2",
-      "task": "Task21 is to complete the task2"
+      "id": "c3ce",
+      "title": "test 1",
+      "task": "this is test task1",
+      "createdAt": "8-1-2025",
+      "status": "Completed",
+      "updatedDate": "8-1-2025"
     },
     {
-      "id": "e58f",
-      "title": "task 7",
-      "task": "task 7"
+      "id": "45f0",
+      "title": "This is another",
+      "task": "this is the another task",
+      "createdAt": "8-1-2025",
+      "status": "To-do"
     },
     {
-      "id": "e17b",
-      "title": "this task 10",
-      "task": "tasl 10"
+      "id": "9001",
+      "title": "lots of thing",
+      "task": "abcdedgedfkjk",
+      "createdAt": "8-1-2025",
+      "status": "In Progress",
+      "updatedDate": "8-1-2025"
     },
     {
-      "id": "609e",
-      "title": "Learn Git",
-      "task": "Learn github basics with some advanced commands like branching."
+      "id": "c1a0",
+      "title": "This is task title",
+      "task": "this also the task text",
+      "createdAt": "8-1-2025",
+      "status": "To-do"
     },
     {
-      "id": "b3ff",
-      "title": "task 1000",
-      "task": "meet pachal"
+      "id": "6074",
+      "title": "akdfk",
+      "task": "ddfkkdkfjdfkdjfd",
+      "createdAt": "8-1-2025",
+      "status": "In Progress"
     },
     {
-      "id": "255c",
-      "title": "task 60",
-      "task": "this is task 6"
+      "id": "456f",
+      "title": "djfdjfkdjk",
+      "task": "dkfjdkfjdfkadkskz",
+      "createdAt": "8-1-2025",
+      "status": "To-do"
     },
     {
-      "id": "3aba",
-      "title": "Today Task ?",
-      "task": "Create a new repo and publish the branch"
+      "id": "d46e",
+      "title": "dfdfd",
+      "task": "KKFF5465456",
+      "createdAt": "8-1-2025",
+      "status": "To-do"
     },
     {
-      "id": "0cba",
-      "title": "today task",
-      "task": "add new features in todo application"
+      "id": "c6a6",
+      "title": "ADFDF",
+      "task": "dfdfdfd",
+      "createdAt": "8-1-2025",
+      "status": "To-do"
     },
     {
-      "id": "4bb5",
-      "title": "today task?",
-      "task": "today task is to add new features",
-      "createdAt": "8-1-2025"
-    },
-    {
-      "id": "ca52",
-      "title": "Hello this today test",
-      "task": "test",
-      "createdAt": "8-1-2025"
+      "id": "8aac",
+      "title": "Hello",
+      "task": "how are you?",
+      "createdAt": "8-1-2025",
+      "status": "In Progress",
+      "updatedDate": "8-1-2025"
     }
   ]
 }
