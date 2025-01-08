@@ -2,13 +2,8 @@
   "todos": [
     {
       "id": "c863",
-      "title": "Task 2",
+      "title": "Task 232",
       "task": "Task21 is to complete the task2"
-    },
-    {
-      "id": "e58f",
-      "title": "task 7",
-      "task": "task 7"
     },
     {
       "id": "e17b",
@@ -18,7 +13,7 @@
     {
       "id": "609e",
       "title": "Learn Git",
-      "task": "Learn github basics with some advanced commands like branching."
+      "task": "Learn github basics with some advanced commands like branching and commit commands."
     },
     {
       "id": "b3ff",
@@ -34,6 +29,11 @@
       "id": "3aba",
       "title": "Today Task ?",
       "task": "Create a new repo and publish the branch"
+    },
+    {
+      "id": "4f08",
+      "title": "hello",
+      "task": "hello this is task"
     }
   ]
 }

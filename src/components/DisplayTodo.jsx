@@ -2,6 +2,7 @@ import Card from "./Card";
 import axios from "axios";
 import { Component } from "react";
 
+
 class DisplayTodo extends Component{
     constructor(props){
         super(props);
@@ -50,57 +51,59 @@ class DisplayTodo extends Component{
         const data = ( searchResults.length > 0 ) ? searchResults : todos;
 
         return(
-            <div
-                className="flex flex-col gap-4"
-            >
-                <form 
-                    onSubmit={this.searchTodos}
-                    onReset={this.cancelSearch}
-                    className="flex items-center gap-2"
+            <>
+                <div
+                    className="flex flex-col gap-4"
                 >
-                    <input 
-                        type="text" 
-                        name="searchQuery" 
-                        value={this.state.searchQuery} 
-                        className="border-2 rounded-md  py-2 px-4 w-full" 
-                        onChange={(e) => this.handleChange(e)}
-                        placeholder="Enter keyword you want search"
-                    />
-
-                    <button 
-                        type="submit" 
-                        className="border border-none bg-blue-800 w-24 h-11 rounded-sm font-bold text-white"
+                    <form 
+                        onSubmit={this.searchTodos}
+                        onReset={this.cancelSearch}
+                        className="flex items-center gap-2"
                     >
-                        Search
-                    </button>
+                        <input 
+                            type="text" 
+                            name="searchQuery" 
+                            value={this.state.searchQuery} 
+                            className="border-2 rounded-md  py-2 px-4 w-full" 
+                            onChange={(e) => this.handleChange(e)}
+                            placeholder="Enter keyword you want search"
+                        />
 
-                    <button 
-                        type="reset" 
-                        className="border border-none bg-red-800 w-24 h-11 rounded-sm font-bold text-white"
-                    >
-                        Cancel
-                    </button>
-                </form>
+                        <button 
+                            type="submit" 
+                            className="border border-none bg-blue-800 w-24 h-11 rounded-sm font-bold text-white"
+                        >
+                            Search
+                        </button>
 
-                {/* todo cards List */}
-                <div className="grid grid-cols-2 mx-auto gap-2">
-                    {
-                        data?.map((todo) => {
-                            const { id, title, task} = todo;
-                            return (
-                                <Card 
-                                    key={id}
-                                    title={title}
-                                    id={id}
-                                    task={task}
-                                    deleteTodo={deleteTodo}
-                                    fetchTodo={fetchTodo}
-                                />
-                            )
-                        })
-                    }
+                        <button 
+                            type="reset" 
+                            className="border border-none bg-red-800 w-24 h-11 rounded-sm font-bold text-white"
+                        >
+                            Cancel
+                        </button>
+                    </form>
+
+                    {/* todo cards List */}
+                    <div className="grid grid-cols-2 mx-auto gap-2">
+                        {
+                            data?.map((todo) => {
+                                const { id, title, task} = todo;
+                                return (
+                                    <Card 
+                                        key={id}
+                                        title={title}
+                                        id={id}
+                                        task={task}
+                                        deleteTodo={deleteTodo}
+                                        fetchTodo={fetchTodo}
+                                    />
+                                )
+                            })
+                        }
+                    </div>
                 </div>
-            </div>
+            </>
         )
     }
 }
