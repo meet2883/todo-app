@@ -1,6 +1,9 @@
 import { Component } from "react";
 import axios from "axios";
 import DisplayTodo from "./components/DisplayTodo";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import List from "./pages/List";
 
 
 class App extends Component{
@@ -121,52 +124,20 @@ class App extends Component{
   }
 
   render(){
-    const { isUpdate, task, title ,todos} = this.state;
     return(
-      <div className="flex flex-col gap-6 max-w-screen-sm mx-auto py-5">
-        <h1 className="text-2xl font-bold text-center">Todo List</h1>
+      <BrowserRouter>
+        <Routes>
+          <Route 
+            path="/"
+            element={<Home />} 
+          />
 
-        {/* todo input part */}
-        <form 
-          onSubmit={this.handleSubmit} 
-          className="flex flex-col items-center gap-4"
-        >
-          <div className="flex flex-col w-full gap-1">
-            <span>Title</span>
-            <input 
-              type="text" 
-              name="title" 
-              id="" 
-              value={title} 
-              className="border-2 rounded-md  py-2 px-4" 
-              onChange={(e) => this.handleChange(e)}
-            />
-          </div>
-          <div className="flex flex-col w-full gap-1">
-            <span>Task</span>
-            <input 
-              type="text" 
-              name="task" 
-              value={task} 
-              className="border-2 rounded-md  py-2 px-4" 
-              onChange={(e) => this.handleChange(e)} 
-            />
-          </div>
-          <button 
-            type="submit" 
-            className="border border-none bg-blue-800 w-24 h-11 rounded-sm font-bold text-white"
-          >
-            { isUpdate ? "Update" : "Add" }
-          </button>
-        </form>
-
-        {/* todo's card list */}
-        <DisplayTodo 
-          todos={todos} 
-          deleteTodo={this.deleteTodo}
-          fetchTodo={this.fetchTodo}
-        />
-      </div>
+          <Route 
+            path="/list"
+            element={<List />}
+          />
+        </Routes>
+      </BrowserRouter>
     )
   }
 }
