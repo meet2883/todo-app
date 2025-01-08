@@ -24,6 +24,7 @@ class List extends Component{
         this.searchTodos = this.searchTodos.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.cancelSearch = this.cancelSearch.bind(this);
+        this.handleKeyboardShortcuts = this.handleKeyboardShortcuts.bind(this);
     }
 
     fetchTodoList = async () => {
@@ -119,20 +120,32 @@ class List extends Component{
         })
     }
 
+    handleKeyboardShortcuts = (e) => {
+        let focusedEvent = document.activeElement;
+
+        if(focusedEvent.tagName === "INPUT" || focusedEvent.tagName === "TEXTAREA"){
+            return;
+        }
+
+        e.preventDefault()
+        if(e.ctrlKey && e.key === "b"){
+            window.location.replace("http://localhost:5173/")
+        }
+    }
+
     componentDidMount = () => {
         this.fetchTodoList();
+
+        document.addEventListener("keypress", this.handleKeyboardShortcuts)
+    }
+
+    componentWillUnmount = () => {
+        document.removeEventListener("keypress", this.handleKeyboardShortcuts)
     }
 
     render(){
         const { todos, searchResults, searchQuery, isUpdate, task, title } =  this.state;
         const data = ( searchResults.length > 0 ) ? searchResults : todos;
-
-        document.addEventListener("keypress",(e) => {
-            e.preventDefault()
-            if(e.key === "h"){
-                window.location.replace("http://localhost:5173/")
-            }
-        })
 
         return(
             <div>
@@ -179,7 +192,7 @@ class List extends Component{
                         >
                             {
                                 data?.map((todo) => {
-                                    const { id, task, title } = todo;
+                                    const { id, task, title, createdAt } = todo;
 
                                     return(
                                         <Card

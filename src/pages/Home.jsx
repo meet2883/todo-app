@@ -12,6 +12,7 @@ class Home extends Component{
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.createTodo = this.createTodo.bind(this);
+        this.handleKeyboardShortcuts = this.handleKeyboardShortcuts.bind(this);
     }
 
     handleChange = (e) => {
@@ -27,9 +28,13 @@ class Home extends Component{
     }
     
     createTodo = async () => {
+        const date = new Date();
+        const createDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}` 
         try {
             const response = await axios.post("http://localhost:3000/todos", { 
-                title : this.state.title, task : this.state.task 
+                title : this.state.title, 
+                task : this.state.task,
+                createdAt : createDate 
             })
             
             this.setState((prevState) => ({
@@ -40,14 +45,30 @@ class Home extends Component{
             console.log(error);
         }
     }
+
+    handleKeyboardShortcuts = (e) => {
+        let focusedEvent = document.activeElement;
+
+        if(focusedEvent.tagName === "INPUT" || focusedEvent.tagName === "TEXTAREA"){
+            return;
+        }
+
+        e.preventDefault()
+        if(e.ctrlKey && e.key === "l"){
+            window.location.replace("http://localhost:5173/list")
+        }
+    }
+
+    componentDidMount = () => {
+        document.addEventListener("keydown", this.handleKeyboardShortcuts)
+    }
+
+    componentWillUnmount(){
+        document.removeEventListener("keydown", this.handleKeyboardShortcuts)
+    }
     
     render(){
-        document.addEventListener("keypress",(e) => {
-            e.preventDefault()
-            if(e.key === "l"){
-                window.location.replace("http://localhost:5173/list")
-            }
-        })
+        
 
         const { task, title } = this.state;
         return(
