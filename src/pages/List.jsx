@@ -127,6 +127,13 @@ class List extends Component{
         const { todos, searchResults, searchQuery, isUpdate, task, title } =  this.state;
         const data = ( searchResults.length > 0 ) ? searchResults : todos;
 
+        document.addEventListener("keypress",(e) => {
+            e.preventDefault()
+            if(e.key === "h"){
+                window.location.replace("http://localhost:5173/")
+            }
+        })
+
         return(
             <div>
                 <div

@@ -1,5 +1,6 @@
 import { Component } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 class Home extends Component{
     constructor(props){
@@ -26,23 +27,28 @@ class Home extends Component{
     }
     
     createTodo = async () => {
-    try {
-        const response = await axios.post("http://localhost:3000/todos", { 
-        title : this.state.title, task : this.state.task 
-        })
-        let newTodo = response.data;
-        
-        this.setState((prevState) => ({
-        todos : [...prevState.todos, newTodo],
-        title : "",
-        task : ""
-        }))
-    } catch (error) {
-        console.log(error);
+        try {
+            const response = await axios.post("http://localhost:3000/todos", { 
+                title : this.state.title, task : this.state.task 
+            })
+            
+            this.setState((prevState) => ({
+                title : "",
+                task : ""
+            }))
+        } catch (error) {
+            console.log(error);
+        }
     }
-    }
-        
+    
     render(){
+        document.addEventListener("keypress",(e) => {
+            e.preventDefault()
+            if(e.key === "l"){
+                window.location.replace("http://localhost:5173/list")
+            }
+        })
+
         const { task, title } = this.state;
         return(
             <div className="flex flex-col gap-6 max-w-screen-sm mx-auto py-5">
