@@ -8,6 +8,8 @@ class Home extends Component{
         this.state = {
           title : "",
           task : "",
+          isTitleEmpty : false,
+          isTaskEmpty : false
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -24,7 +26,29 @@ class Home extends Component{
     
     handleSubmit = (e) => {
         e.preventDefault();
-        this.createTodo()
+        const { title, task } = this.state;
+        let isTitleEmpty = false;
+        let isTaskEmpty = false;
+
+        if(title === "") {
+           isTitleEmpty = true
+        } 
+
+        if(task === ""){
+            isTaskEmpty = true
+        } 
+
+        this.setState({
+            isTitleEmpty,
+            isTaskEmpty
+        })
+
+        if(isTitleEmpty == false && isTaskEmpty == false) {
+            this.createTodo()
+        } else {
+            console.log(`pleaes fill the all the fields. ${isTitleEmpty} ${isTaskEmpty}`)
+            return
+        }
     }
     
     createTodo = async () => {
@@ -68,13 +92,11 @@ class Home extends Component{
     }
     
     render(){
-        
-
-        const { task, title } = this.state;
+        const { task, title, isTaskEmpty, isTitleEmpty } = this.state;
         return(
             <div className="flex flex-col gap-6 max-w-screen-sm mx-auto py-5">
                  <Link to={"/list"} className="underline-offset-4">Lists</Link>
-                <h1 className="text-2xl font-bold text-center">Todo List</h1>
+                <h1 className="text-2xl font-bold text-center">Add your tasks here</h1>
 
                 {/* todo input part */}
                 <form 
@@ -88,9 +110,10 @@ class Home extends Component{
                         name="title" 
                         id="" 
                         value={title} 
-                        className="border-2 rounded-md  py-2 px-4" 
+                        className={`${isTitleEmpty && "border-red-700"} border-2 rounded-md  py-2 px-4`} 
                         onChange={(e) => this.handleChange(e)}
                         />
+                        {isTitleEmpty && (<small className="text-red-700">please add the title</small>)}
                     </div>
                     <div className="flex flex-col w-full gap-1">
                         <span>Task</span>
@@ -98,9 +121,10 @@ class Home extends Component{
                         type="text" 
                         name="task" 
                         value={task} 
-                        className="border-2 rounded-md  py-2 px-4" 
+                        className={`${isTaskEmpty && "border-red-700"} border-2 rounded-md  py-2 px-4`}  
                         onChange={(e) => this.handleChange(e)} 
                         />
+                        {isTaskEmpty && (<small className="text-red-700">please add the task</small>)}
                     </div>
                     <button 
                         type="submit" 

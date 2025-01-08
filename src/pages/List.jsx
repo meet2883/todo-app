@@ -101,9 +101,12 @@ class List extends Component{
     searchTodos =  (e) => {
         e.preventDefault();
         const { searchQuery } = this.state;
-        if(this.state.searchQuery !== "") {
+        if(searchQuery !== "") {
             const filterResults = this.state.todos?.filter((todo) => {
-                return todo?.title?.toString().includes(searchQuery) || todo?.task?.toString().includes(searchQuery) 
+                const { title, task, createAt } = todo;
+                return title?.toString().toLowerCase().includes(searchQuery.toLowerCase()) || 
+                        task?.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        createAt?.toString().toLowerCase().includes(searchQuery.toLowerCase())
             })
 
             this.setState({
@@ -202,6 +205,7 @@ class List extends Component{
                                             title={title}
                                             fetchTodo={this.fetchTodo}
                                             deleteTodo={this.deleteTodo}
+                                            createdAt={createdAt}
                                         />
                                     )
                                 })
