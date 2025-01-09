@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Component } from "react";
+import { Component, createRef } from "react";
 import Card from "../components/Card";
 import { Link } from "react-router-dom";
 import UpdateForm from "../components/UpdateForm";
@@ -28,6 +28,11 @@ class List extends Component {
     this.cancelSearch = this.cancelSearch.bind(this);
     this.handleKeyboardShortcuts = this.handleKeyboardShortcuts.bind(this);
     this.getfilterValues = this.getfilterValues.bind(this);
+    this.closeModel = this.closeModel.bind(this);
+  }
+
+  closeModel = () => {
+    this.setState({ isUpdate : false })
   }
 
   // fetch all tasks list while component loaded
@@ -123,11 +128,18 @@ class List extends Component {
     const { searchQuery } = this.state;
     if (searchQuery !== "") {
       const filterResults = this.state.todos?.filter((todo) => {
-        const { title, task, createAt } = todo;
+        const { title, task, createdAt, updatedDate } = todo;
         return (
           title?.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
           task?.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
-          createAt?.toString().toLowerCase().includes(searchQuery.toLowerCase())
+          createdAt
+            ?.toString()
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          updatedDate
+            ?.toString()
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
         );
       });
 
@@ -192,7 +204,6 @@ class List extends Component {
 
   componentDidMount = () => {
     this.fetchTodoList();
-
     document.addEventListener("keypress", this.handleKeyboardShortcuts);
   };
 
@@ -284,12 +295,13 @@ class List extends Component {
 
             {/* display todo's list */}
             <div className="grid grid-cols-2 gap-3">
-              {data?.map((todo) => {
+              {data?.map((todo, index) => {
                 const { id, task, title, createdAt, status, updatedDate } =
                   todo;
 
                 return (
                   <Card
+                    index={index}
                     key={id}
                     id={id}
                     task={task}
@@ -312,6 +324,7 @@ class List extends Component {
             task={task}
             status={status}
             updateTodo={this.updateTodo}
+            closeModel={this.closeModel}
             handleChange={this.handleChange}
             changeIsUpdate={this.changeIsUpdate}
           />
