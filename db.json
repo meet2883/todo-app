@@ -45,51 +45,9 @@
       "status": "To-do"
     },
     {
-      "id": "58ef",
-      "title": "kaise",
-      "task": "kaise",
-      "createdAt": "9-1-2025",
-      "status": "To-do"
-    },
-    {
-      "id": "2f9b",
-      "title": "hello",
-      "task": "hello",
-      "createdAt": "9-1-2025",
-      "status": "To-do"
-    },
-    {
       "id": "0132",
       "title": "hello",
       "task": "helllo task",
-      "createdAt": "10-1-2025",
-      "status": "To-do"
-    },
-    {
-      "id": "56a0",
-      "title": "tittle",
-      "task": "title",
-      "createdAt": "10-1-2025",
-      "status": "To-do"
-    },
-    {
-      "id": "6aeb",
-      "title": "fdfd",
-      "task": "fddfdf",
-      "createdAt": "10-1-2025",
-      "status": "To-do"
-    },
-    {
-      "id": "b813",
-      "title": "fdfd",
-      "task": "fddfdf",
-      "createdAt": "10-1-2025",
-      "status": "To-do"
-    },
-    {
-      "id": "85f4",
-      "title": "fdfd",
-      "task": "fddfdf",
       "createdAt": "10-1-2025",
       "status": "To-do"
     },
