@@ -1,5 +1,6 @@
 import { Component, createRef } from "react";
 import { BsXLg } from "react-icons/bs";
+import { Input } from "./Input";
 
 class UpdateForm extends Component {
   constructor(props) {
@@ -32,10 +33,12 @@ class UpdateForm extends Component {
       task,
       status,
       closeModel,
+      isTitleEmpty,
+      isTaskEmpty
     } = this.props;
     return (
       <form
-        className="fixed inset-0 bg-white drop-shadow-xl rounded-sm bg-opacity-100 flex flex-col w-96 h-96 p-5 m-auto justify-center items-center gap-3"
+        className="fixed inset-0 bg-white drop-shadow-2xl ease-in-out rounded-sm bg-opacity-100 flex flex-col w-96 h-96 p-5 m-auto justify-center items-center gap-3"
         onSubmit={updateTodo}
         ref={this.modelRef}
       >
@@ -46,24 +49,28 @@ class UpdateForm extends Component {
         />
         <div className="flex flex-col w-full gap-1">
           <span>Title</span>
-          <input
+          <Input
             type="text"
             name="title"
-            id=""
+            id="title"
             value={title}
             className="border-2 rounded-md  py-2 px-4"
             onChange={(e) => handleChange(e)}
+            isempty={isTitleEmpty}
+            errmsg="please enter todo title"
           />
         </div>
 
         <div className="flex flex-col w-full gap-1">
           <span>Task</span>
-          <textarea
+          <Input
             type="text"
             name="task"
             value={task}
             className="border-2 rounded-md  py-2 px-4"
             onChange={(e) => handleChange(e)}
+            isempty={isTaskEmpty}
+            errmsg="please enter todo task"
           />
         </div>
 

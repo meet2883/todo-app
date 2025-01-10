@@ -1,6 +1,8 @@
 import { Component } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { Input } from "../components/Input";
+import { makeReq } from "../Utils/makeReq";
 // import { Validation } from "../Utils/Validation";
 
 class Home extends Component {
@@ -12,6 +14,8 @@ class Home extends Component {
       isTitleEmpty: false,
       isTaskEmpty: false,
       status: "To-do",
+      isLoading: false,
+      isError: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -63,8 +67,8 @@ class Home extends Component {
       }
 
       console.log(sentence);
-      let utterance = new SpeechSynthesisUtterance(sentence);
-      speechSynthesis.speak(utterance);
+      // let utterance = new SpeechSynthesisUtterance(sentence);
+      // speechSynthesis.speak(utterance);
       console.log(
         `pleaes fill the all the fields. ${isTitleEmpty} ${isTaskEmpty}`
       );
@@ -80,26 +84,19 @@ class Home extends Component {
       date.getMonth() + 1
     }-${date.getFullYear()}`;
 
-    try {
-      const response = await axios.post("http://localhost:3000/todos", {
-        title,
-        task,
-        createdAt,
-        status,
-      });
+    let data = { title, task, createdAt, status };
 
-      let utterance = new SpeechSynthesisUtterance(`${task} added`);
-      speechSynthesis.speak(utterance);
-
-      setTimeout(() => {
+    makeReq({ method: "POST", data })
+      .then(() => {
         this.setState((prevState) => ({
           title: "",
           task: "",
         }));
-      }, 1000);
-    } catch (error) {
-      console.log(error);
-    }
+      })
+      .catch(() => this.setState({ isError: true }))
+      .finally(() => {
+        this.setState({ isLoading: false });
+      });
   };
 
   handleKeyboardShortcuts = (e) => {
@@ -119,10 +116,12 @@ class Home extends Component {
   };
 
   componentDidMount = () => {
-    let utterance = new SpeechSynthesisUtterance(`to keise he app log`);
-    utterance.lang = "hi-IN"
-    speechSynthesis.speak(utterance)
+    // let utterance = new SpeechSynthesisUtterance(`to keise he app log`);
+    // utterance.lang = "hi-IN"
+    // speechSynthesis.speak(utterance)
     document.addEventListener("keydown", this.handleKeyboardShortcuts);
+
+    // console.log(data);
   };
 
   componentWillUnmount() {
@@ -130,7 +129,8 @@ class Home extends Component {
   }
 
   render() {
-    const { task, title, isTaskEmpty, isTitleEmpty, status } = this.state;
+    const { task, title, isTaskEmpty, isTitleEmpty, status, isError } =
+      this.state;
     return (
       <div className="flex flex-col gap-6 max-w-screen-sm mx-auto py-5">
         <Link to={"/list"} className="underline-offset-4">
@@ -143,39 +143,33 @@ class Home extends Component {
           onSubmit={this.handleSubmit}
           className="flex flex-col items-center gap-4"
         >
-          <div className="flex flex-col w-full gap-1">
-            <span>Title</span>
-            <input
-              type="text"
-              name="title"
-              id="title"
-              value={title}
-              className={`${
-                isTitleEmpty && "border-red-700"
-              } border-2 rounded-md  py-2 px-4`}
-              onChange={(e) => this.handleChange(e)}
-            />
-            {isTitleEmpty && (
-              <small className="text-red-700">please add the title</small>
-            )}
-          </div>
+          <Input
+            title="Title"
+            type="text"
+            name="title"
+            id="title"
+            value={title}
+            className={`${
+              isTitleEmpty && "border-red-700"
+            } border-2 rounded-md  py-2 px-4`}
+            onChange={(e) => this.handleChange(e)}
+            isempty={this.state.isTitleEmpty}
+            errmsg="please add the title"
+          />
 
-          <div className="flex flex-col w-full gap-1">
-            <span>Task</span>
-            <textarea
-              type="text"
-              name="task"
-              id="task"
-              value={task}
-              className={`${
-                isTaskEmpty && "border-red-700"
-              } border-2 rounded-md  py-2 px-4`}
-              onChange={(e) => this.handleChange(e)}
-            />
-            {isTaskEmpty && (
-              <small className="text-red-700">please add the task</small>
-            )}
-          </div>
+          <Input
+            title="Task"
+            type="text"
+            name="task"
+            id="task"
+            value={task}
+            className={`${
+              isTitleEmpty && "border-red-700"
+            } border-2 rounded-md  py-2 px-4`}
+            onChange={(e) => this.handleChange(e)}
+            isempty={this.state.isTaskEmpty}
+            errmsg="please add the task"
+          />
 
           <div className="flex flex-col w-full gap-1">
             <span>Status</span>
@@ -196,9 +190,15 @@ class Home extends Component {
             type="submit"
             className="border border-none bg-blue-800 w-24 h-11 rounded-sm font-bold text-white"
           >
-            Add
+            {this.state.isLoading ? "Submitting..." : "Add"}
           </button>
         </form>
+
+        {isError && (
+          <small className="text-red-600">
+            Error while submitting the data
+          </small>
+        )}
       </div>
     );
   }

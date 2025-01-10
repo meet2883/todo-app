@@ -3,6 +3,8 @@ import { Component, createRef } from "react";
 import Card from "../components/Card";
 import { Link } from "react-router-dom";
 import UpdateForm from "../components/UpdateForm";
+import { Input } from "../components/Input";
+import { makeReq } from "../Utils/makeReq";
 
 class List extends Component {
   constructor(props) {
@@ -18,6 +20,9 @@ class List extends Component {
       status: "",
       filterValues: [],
       filterQuery: "",
+      startColor: false,
+      isTaskEmpty: false,
+      isTitleEmpty: false,
     };
     this.fetchTodoList = this.fetchTodoList.bind(this);
     this.deleteTodo = this.deleteTodo.bind(this);
@@ -29,88 +34,90 @@ class List extends Component {
     this.handleKeyboardShortcuts = this.handleKeyboardShortcuts.bind(this);
     this.getfilterValues = this.getfilterValues.bind(this);
     this.closeModel = this.closeModel.bind(this);
+    this.handleColor = this.handleColor.bind(this);
   }
 
   closeModel = () => {
-    this.setState({ isUpdate : false })
-  }
+    this.setState({ isUpdate: false });
+  };
 
   // fetch all tasks list while component loaded
-  fetchTodoList = async () => {
-    try {
-      await axios
-        .get("http://localhost:3000/todos")
-        .then((res) => {
-          this.setState({ todos: res.data });
-          // console.log(res)
-        })
-        .catch((err) => console.log(err));
-    } catch (error) {
-      console.log(error);
-    }
+  fetchTodoList = () => {
+    makeReq({ method: "GET" })
+      .then((res) => {
+        this.setState({ todos: res.data });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   // update task based on id
-  updateTodo = async () => {
-    let date = new Date();
+  updateTodo = async (e) => {
+    e.preventDefault();
 
-    // save the task updated date while updating
-    const updatedDate = `${date.getDate()}-${
-      date.getMonth() + 1
-    }-${date.getFullYear()}`;
-    try {
-      const response = await axios.patch(
-        `http://localhost:3000/todos/${this.state.updateTodoId}`,
-        {
-          title: this.state.title,
-          task: this.state.task,
-          status: this.state.status,
-          updatedDate,
-        }
-      );
-      this.fetchTodoList();
-    } catch (error) {
-      console.log(error);
-    } finally {
-      this.setState({
-        isUpdate: true,
-        task: "",
-        title: "",
-      });
+    const { title, task, updateId } = this.state;
+    let isTitleEmpty = false;
+    let isTaskEmpty = false;
+
+    if (title === "") isTitleEmpty = true;
+    if (task === "") isTaskEmpty = true;
+
+    this.setState({ isTaskEmpty, isTitleEmpty });
+
+    if (isTaskEmpty == false && isTitleEmpty == false) {
+      let date = new Date();
+
+      // save the task updated date while updating
+      const updatedDate = `${date.getDate()}-${
+        date.getMonth() + 1
+      }-${date.getFullYear()}`;
+
+      let data = {
+        title: this.state.title,
+        task: this.state.task,
+        status: this.state.status,
+        updatedDate,
+      };
+
+      makeReq({ method: "PATCH", endpoint: updateId, data })
+        .then(() => {
+          this.fetchTodoList();
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          this.setState({
+            isUpdate: false,
+            task: "",
+            title: "",
+          });
+        });
     }
   };
 
   // delete task based on id
   deleteTodo = async (id) => {
-    try {
-      await axios.delete(`http://localhost:3000/todos/${id}`);
-
-      this.setState((prevState) => ({
-        todos: prevState.todos.filter((todo) => todo?.id !== id),
-      }));
-    } catch (error) {
-      console.log(error);
-    }
+    makeReq({ method: "DELETE", endpoint: id })
+    this.setState((prevState) => ({
+      todos: prevState.todos.filter((todo) => todo?.id !== id)
+    }));
   };
 
   // fetch task based on id
   fetchTodo = async (id) => {
-    try {
-      await axios
-        .get(`http://localhost:3000/todos/${id}`)
-        .then((res) => {
-          this.setState({
-            title: res?.data?.title,
-            task: res?.data?.task,
-            isUpdate: true,
-            updateTodoId: res?.data?.id,
-            status: res?.data?.status,
-          });
-        })
-        .catch((err) => console.log(err));
-    } catch (error) {
-      console.log(error);
-    }
+    makeReq({ method: "GET", endpoint: id })
+      .then((res) => {
+        this.setState({
+          title: res?.data?.title,
+          task: res?.data?.task,
+          isUpdate: true,
+          updateId: res?.data?.id,
+          status: res?.data?.status,
+        });
+      })
+      .catch((err) => console.log(err));
   };
 
   // set values while element change
@@ -125,9 +132,12 @@ class List extends Component {
   // search tasks based on input string
   searchTodos = (e) => {
     e.preventDefault();
-    const { searchQuery } = this.state;
+    const { searchQuery, todos, filterValues } = this.state;
+
+    let data = filterValues.length > 0 ? filterValues : todos;
+
     if (searchQuery !== "") {
-      const filterResults = this.state.todos?.filter((todo) => {
+      const filterResults = data?.filter((todo) => {
         const { title, task, createdAt, updatedDate } = todo;
         return (
           title?.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -151,18 +161,20 @@ class List extends Component {
 
   //   filter tasks based on status
   getfilterValues = (e) => {
-    e.preventDefault();
-    const { filterQuery, searchResults, todos } = this.state;
+    // e.preventDefault();
+    let query = e.target.value;
+    this.setState({ filterQuery: query });
+    const { searchResults, todos } = this.state;
 
     let filterData = searchResults.length > 0 ? searchResults : todos;
 
-    if (filterQuery === "All") {
+    if (query === "All") {
       this.setState({
-        filterValues: filterData,
+        filterValues: [],
       });
     } else {
       const filterResults = filterData?.filter((todo) => {
-        return todo?.status === filterQuery;
+        return todo?.status === query;
       });
 
       this.setState({
@@ -202,6 +214,10 @@ class List extends Component {
     });
   };
 
+  handleColor = () => {
+    this.setState({ startColor: !this.state.startColor });
+  };
+
   componentDidMount = () => {
     this.fetchTodoList();
     document.addEventListener("keypress", this.handleKeyboardShortcuts);
@@ -223,13 +239,15 @@ class List extends Component {
       status,
       filterQuery,
       filterValues,
+      isTaskEmpty,
+      isTitleEmpty,
     } = this.state;
 
     const data =
-      filterValues.length > 0
-        ? filterValues
-        : searchResults.length > 0
+      searchResults.length > 0
         ? searchResults
+        : filterValues.length > 0
+        ? filterValues
         : todos;
 
     return (
@@ -247,13 +265,14 @@ class List extends Component {
               onReset={this.cancelSearch}
               className="flex items-center gap-2 w-[650px]"
             >
-              <input
+              <Input
                 type="text"
                 name="searchQuery"
                 value={searchQuery}
                 className="border-2 rounded-md  py-2 px-4 w-full"
                 onChange={(e) => this.handleChange(e)}
                 placeholder="Enter keyword you want search"
+                isempty={false}
               />
 
               <button
@@ -272,48 +291,65 @@ class List extends Component {
             </form>
 
             {/* form for filter the value */}
-            <form onSubmit={this.getfilterValues}>
-              <select
-                name="filterQuery"
-                value={filterQuery}
-                onChange={this.handleChange}
-                className="w-28 h-10 p-1 border-2 rounded-sm cursor-pointer"
-              >
-                <option value="All">All</option>
-                <option value="To-do">To-do</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Completed">Completed</option>
-              </select>
 
-              <button
-                type="submit"
-                className="border border-none bg-orange-500 w-24 h-11 rounded-sm font-bold text-white"
-              >
-                Filter
-              </button>
+            <form className="flex gap-5 items-center font-bold">
+              <div className="flex gap-1 items-center">
+                <span>Status :</span>
+                <select
+                  name="filterQuery"
+                  value={filterQuery}
+                  onChange={(e) => {
+                    this.getfilterValues(e);
+                  }}
+                  className="w-28 h-10 p-1 border-2 rounded-sm cursor-pointer"
+                >
+                  <option value="All">All</option>
+                  <option value="To-do">To-do</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                </select>
+              </div>
+
+              <div className="flex items-center gap-1">
+                <span>color</span>
+                <Input
+                  type="checkbox"
+                  checked={this.state.startColor}
+                  onClick={this.handleColor}
+                  name="startColor"
+                  id="startColor"
+                  isempty={false}
+                  errmsg=""
+                />
+              </div>
             </form>
 
             {/* display todo's list */}
             <div className="grid grid-cols-2 gap-3">
-              {data?.map((todo, index) => {
-                const { id, task, title, createdAt, status, updatedDate } =
-                  todo;
+              {data.length === 0 ? (
+                <h1>No record found</h1>
+              ) : (
+                data?.map((todo, index) => {
+                  const { id, task, title, createdAt, status, updatedDate } =
+                    todo;
 
-                return (
-                  <Card
-                    index={index}
-                    key={id}
-                    id={id}
-                    task={task}
-                    title={title}
-                    fetchTodo={this.fetchTodo}
-                    deleteTodo={this.deleteTodo}
-                    createdAt={createdAt}
-                    status={status}
-                    updatedDate={updatedDate}
-                  />
-                );
-              })}
+                  return (
+                    <Card
+                      index={index}
+                      key={id}
+                      id={id}
+                      task={task}
+                      title={title}
+                      fetchTodo={this.fetchTodo}
+                      deleteTodo={this.deleteTodo}
+                      createdAt={createdAt}
+                      status={status}
+                      updatedDate={updatedDate}
+                      startColor={this.state.startColor}
+                    />
+                  );
+                })
+              )}
             </div>
           </div>
         </div>
@@ -323,6 +359,8 @@ class List extends Component {
             title={title}
             task={task}
             status={status}
+            isTitleEmpty={isTitleEmpty}
+            isTaskEmpty={isTaskEmpty}
             updateTodo={this.updateTodo}
             closeModel={this.closeModel}
             handleChange={this.handleChange}

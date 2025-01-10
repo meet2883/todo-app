@@ -18,25 +18,28 @@ class Card extends Component{
             id, 
             createdAt,
             status,
-            updatedDate 
+            updatedDate,
+            startColor
         } = this.props;
-        
+
         return(
             <div
                 className={`flex flex-col border-2 cursor-pointer border-white 
-                    rounded-xl w-80 h-32 p-2 drop-shadow-lg ${this.state.bg !== "" 
+                    rounded-xl w-80 h-32 p-2 drop-shadow-lg ${startColor && this.state.bg !== "" 
                     ? `${this.state.bg} text-white` : "bg-white text-black"}`}
 
                 onMouseOver={() => {
-                    let number;
-                    let index = this.props.index + 1;
+                    // solution 1
+                    // let number;
+                    // let index = this.props.index + 1;
 
-                    if(index > 7) {
-                        let diff = index - 7;
-                        number = diff;
-                    } else {
-                        number = index;
-                    }
+                    // if(index > 7) {
+                    //     let diff = index / 7;
+                    //     number = Math.floor(diff);
+                    //     console.log(number)
+                    // } else {
+                    //     number = index;
+                    // }
 
                     let obj = {
                         1 : "bg-red-400",
@@ -48,6 +51,8 @@ class Card extends Component{
                         7 : "bg-violet-400",
                     }
 
+                    // solution 2
+                    let number = Math.floor(Math.random() * (1, 7) + 1);
                     let bg = obj[number];
                     this.setState({
                         bg
