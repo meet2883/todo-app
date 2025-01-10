@@ -17,6 +17,8 @@ class List extends Component {
       searchQuery: "",
       title: "",
       task: "",
+      tag : "",
+      tags : [],
       status: "",
       filterValues: [],
       filterQuery: "",
@@ -35,6 +37,7 @@ class List extends Component {
     this.getfilterValues = this.getfilterValues.bind(this);
     this.closeModel = this.closeModel.bind(this);
     this.handleColor = this.handleColor.bind(this);
+    this.addTag = this.addTag.bind(this);
   }
 
   closeModel = () => {
@@ -56,7 +59,7 @@ class List extends Component {
   updateTodo = async (e) => {
     e.preventDefault();
 
-    const { title, task, updateId } = this.state;
+    const { title, task, updateId, tags } = this.state;
     let isTitleEmpty = false;
     let isTaskEmpty = false;
 
@@ -78,6 +81,7 @@ class List extends Component {
         task: this.state.task,
         status: this.state.status,
         updatedDate,
+        tags
       };
 
       makeReq({ method: "PATCH", endpoint: updateId, data })
@@ -92,6 +96,8 @@ class List extends Component {
             isUpdate: false,
             task: "",
             title: "",
+            tag : "",
+            tags : []
           });
         });
     }
@@ -115,6 +121,7 @@ class List extends Component {
           isUpdate: true,
           updateId: res?.data?.id,
           status: res?.data?.status,
+          tags : res?.data?.tags
         });
       })
       .catch((err) => console.log(err));
@@ -129,6 +136,22 @@ class List extends Component {
     });
   };
 
+  addTag = (e) => {
+    e.preventDefault();
+    if(this.state.tag !== ""){
+      this.state.tags.push(this.state.tag);
+      this.setState((prevState) => ({ tag: "" }));
+    }
+  };
+
+  removeTag = (e, i, str) => {
+    e.preventDefault();
+    let tags = this.state.tags.filter((tag, index) => tag !== str && index !== i);
+    this.setState((prevState) => ({
+      tags
+    }))
+  }
+
   // search tasks based on input string
   searchTodos = (e) => {
     e.preventDefault();
@@ -138,7 +161,7 @@ class List extends Component {
 
     if (searchQuery !== "") {
       const filterResults = data?.filter((todo) => {
-        const { title, task, createdAt, updatedDate } = todo;
+        const { title, task, createdAt, updatedDate, tags } = todo;
         return (
           title?.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
           task?.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -149,7 +172,8 @@ class List extends Component {
           updatedDate
             ?.toString()
             .toLowerCase()
-            .includes(searchQuery.toLowerCase())
+            .includes(searchQuery.toLowerCase()) ||
+          tags?.filter((tag) => tag?.toString().toLowerCase() === tag.toLowerCase())
         );
       });
 
@@ -241,6 +265,8 @@ class List extends Component {
       filterValues,
       isTaskEmpty,
       isTitleEmpty,
+      tags,
+      tag
     } = this.state;
 
     const data =
@@ -325,12 +351,12 @@ class List extends Component {
             </form>
 
             {/* display todo's list */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3">
               {data.length === 0 ? (
                 <h1>No record found</h1>
               ) : (
                 data?.map((todo, index) => {
-                  const { id, task, title, createdAt, status, updatedDate } =
+                  const { id, task, title, createdAt, status, updatedDate, tags } =
                     todo;
 
                   return (
@@ -340,6 +366,7 @@ class List extends Component {
                       id={id}
                       task={task}
                       title={title}
+                      tags={tags}
                       fetchTodo={this.fetchTodo}
                       deleteTodo={this.deleteTodo}
                       createdAt={createdAt}
@@ -359,8 +386,12 @@ class List extends Component {
             title={title}
             task={task}
             status={status}
+            tags={tags}
+            tag={tag}
             isTitleEmpty={isTitleEmpty}
             isTaskEmpty={isTaskEmpty}
+            removeTag={this.removeTag}
+            addTag={this.addTag}
             updateTodo={this.updateTodo}
             closeModel={this.closeModel}
             handleChange={this.handleChange}

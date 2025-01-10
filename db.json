@@ -1,62 +1,29 @@
 {
   "todos": [
     {
-      "id": "8aac",
-      "title": "Hello you?",
-      "task": "how are you?",
-      "createdAt": "8-1-2025",
-      "status": "Completed",
-      "updatedDate": "10-1-2025"
-    },
-    {
-      "id": "2f55",
-      "title": "this title 34",
-      "task": "hello",
-      "createdAt": "9-1-2025",
+      "id": "4dfb",
+      "title": "add tags",
+      "task": "the task is add tags in todo",
+      "createdAt": "10-1-2025",
       "status": "To-do",
+      "tags": [
+        "add",
+        "adfdf",
+        "dfd"
+      ],
       "updatedDate": "10-1-2025"
     },
     {
-      "id": "ee63",
-      "title": "Add audio",
-      "task": "add audio task addedd",
-      "createdAt": "9-1-2025",
-      "status": "To-do"
-    },
-    {
-      "id": "de7a",
-      "title": "hello",
-      "task": "hello",
-      "createdAt": "9-1-2025",
-      "status": "To-do"
-    },
-    {
-      "id": "d112",
-      "title": "todo",
-      "task": "this is meet panchal todo application",
-      "createdAt": "9-1-2025",
-      "status": "To-do"
-    },
-    {
-      "id": "1961",
-      "title": "this is last todo",
-      "task": "may be this is last todo of this application",
-      "createdAt": "9-1-2025",
-      "status": "To-do"
-    },
-    {
-      "id": "0132",
-      "title": "hello",
-      "task": "helllo task",
+      "id": "4198",
+      "title": "fgfg",
+      "task": "fgfg",
       "createdAt": "10-1-2025",
-      "status": "To-do"
-    },
-    {
-      "id": "1e27",
-      "title": "hello add custom api",
-      "task": "api",
-      "createdAt": "10-1-2025",
-      "status": "To-do"
+      "status": "To-do",
+      "tags": [
+        "dfdfdf",
+        "dfdf"
+      ],
+      "updatedDate": "10-1-2025"
     }
   ]
 }
