@@ -66,7 +66,7 @@ class UpdateForm extends Component {
             value={title}
             className="border-2 rounded-md  py-2 px-4"
             onChange={(e) => handleChange(e)}
-            isempty={isTitleEmpty}
+            isempty={isTitleEmpty ? 1 : 0}
             errmsg="please enter todo title"
           />
         </div>
@@ -79,7 +79,7 @@ class UpdateForm extends Component {
             value={task}
             className="border-2 rounded-md  py-2 px-4"
             onChange={(e) => handleChange(e)}
-            isempty={isTaskEmpty}
+            isempty={isTaskEmpty ? 1 : 0 }
             errmsg="please enter todo task"
           />
         </div>
@@ -94,6 +94,7 @@ class UpdateForm extends Component {
               className="border-2 rounded-md  w-[560px] py-2 px-4 "
               onChange={(e) => handleChange(e)}
               placeholder="Enter your tags here"
+              isempty={0}
             />
             <button
               type="submit"

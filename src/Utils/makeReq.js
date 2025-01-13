@@ -4,9 +4,7 @@ export const makeReq = async ({ method, endpoint, data }) => {
   try {
     const res = await axios({
       method,
-      url: endpoint
-        ? `http://localhost:3000/todos/${endpoint}`
-        : `http://localhost:3000/todos`,
+      url: `http://localhost:3000/${endpoint}`,
       data,
     });
     return { data: res.data, statusText: res.statusText };

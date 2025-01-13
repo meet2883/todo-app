@@ -67,6 +67,7 @@ class DisplayTodo extends Component{
                             className="border-2 rounded-md  py-2 px-4 w-full" 
                             onChange={(e) => this.handleChange(e)}
                             placeholder="Enter keyword you want search"
+                            isempty={0}
                         />
 
                         <button 

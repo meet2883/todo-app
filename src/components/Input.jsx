@@ -7,11 +7,12 @@ export class Input extends Component {
   }
   render() {
     const { title, isempty, errmsg } = this.props;
+
     return (
       <div className="flex flex-col w-full gap-1">
         <span>{title}</span>
         <input {...this.props} />
-        {isempty && <small className="text-red-600">{errmsg}</small>}
+        {Boolean(isempty) && <small className="text-red-600">{errmsg}</small>}
       </div>
     );
   }
@@ -22,8 +23,3 @@ Input.prototypes = {
     title : PropTypes.string.isRequired,
     errmsg : PropTypes.string
 }
-
-Input.defaultProps = {
-    isempty : false
-}
-

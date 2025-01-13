@@ -1,29 +1,22 @@
 {
   "todos": [
     {
-      "id": "4dfb",
-      "title": "add tags",
-      "task": "the task is add tags in todo",
+      "id": "3980",
+      "title": "hello",
+      "task": "hello",
       "createdAt": "10-1-2025",
       "status": "To-do",
-      "tags": [
-        "add",
-        "adfdf",
-        "dfd"
-      ],
-      "updatedDate": "10-1-2025"
+      "tags": []
     },
     {
-      "id": "4198",
-      "title": "fgfg",
-      "task": "fgfg",
-      "createdAt": "10-1-2025",
-      "status": "To-do",
+      "id": "1413",
+      "title": "hello",
+      "task": "this is 13th januaray",
+      "createdAt": "13-1-2025",
+      "status": "In Progress",
       "tags": [
-        "dfdfdf",
-        "dfdf"
-      ],
-      "updatedDate": "10-1-2025"
+        "kite"
+      ]
     }
   ]
 }

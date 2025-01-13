@@ -1,5 +1,5 @@
-import axios from "axios";
-import { Component, createRef } from "react";
+import { toast } from "react-toastify";
+import { Component } from "react";
 import Card from "../components/Card";
 import { Link } from "react-router-dom";
 import UpdateForm from "../components/UpdateForm";
@@ -17,8 +17,8 @@ class List extends Component {
       searchQuery: "",
       title: "",
       task: "",
-      tag : "",
-      tags : [],
+      tag: "",
+      tags: [],
       status: "",
       filterValues: [],
       filterQuery: "",
@@ -46,7 +46,7 @@ class List extends Component {
 
   // fetch all tasks list while component loaded
   fetchTodoList = () => {
-    makeReq({ method: "GET" })
+    makeReq({ method: "GET", endpoint: "todos" })
       .then((res) => {
         this.setState({ todos: res.data });
       })
@@ -81,23 +81,25 @@ class List extends Component {
         task: this.state.task,
         status: this.state.status,
         updatedDate,
-        tags
+        tags,
       };
 
-      makeReq({ method: "PATCH", endpoint: updateId, data })
+      makeReq({ method: "PATCH", endpoint: `todos/${updateId}`, data })
         .then(() => {
           this.fetchTodoList();
+          toast.success("To-do updated.", { autoClose: 2000 });
         })
         .catch((err) => {
           console.log(err);
+          toast.error("Failed to update To-do.", { autoClose: 2000 });
         })
         .finally(() => {
           this.setState({
             isUpdate: false,
             task: "",
             title: "",
-            tag : "",
-            tags : []
+            tag: "",
+            tags: [],
           });
         });
     }
@@ -105,15 +107,22 @@ class List extends Component {
 
   // delete task based on id
   deleteTodo = async (id) => {
-    makeReq({ method: "DELETE", endpoint: id })
-    this.setState((prevState) => ({
-      todos: prevState.todos.filter((todo) => todo?.id !== id)
-    }));
+    makeReq({ method: "DELETE", endpoint: `todos/${id}` })
+      .then(() => {
+        this.setState((prevState) => ({
+          todos: prevState.todos.filter((todo) => todo?.id !== id),
+        }));
+        toast.info("To-do deleted.", { autoClose: 2000 });
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Failed to delete To-do.", { autoClose: 2000 });
+      });
   };
 
   // fetch task based on id
   fetchTodo = async (id) => {
-    makeReq({ method: "GET", endpoint: id })
+    makeReq({ method: "GET", endpoint: `todos/${id}` })
       .then((res) => {
         this.setState({
           title: res?.data?.title,
@@ -121,7 +130,7 @@ class List extends Component {
           isUpdate: true,
           updateId: res?.data?.id,
           status: res?.data?.status,
-          tags : res?.data?.tags
+          tags: res?.data?.tags,
         });
       })
       .catch((err) => console.log(err));
@@ -138,7 +147,7 @@ class List extends Component {
 
   addTag = (e) => {
     e.preventDefault();
-    if(this.state.tag !== ""){
+    if (this.state.tag !== "") {
       this.state.tags.push(this.state.tag);
       this.setState((prevState) => ({ tag: "" }));
     }
@@ -146,11 +155,13 @@ class List extends Component {
 
   removeTag = (e, i, str) => {
     e.preventDefault();
-    let tags = this.state.tags.filter((tag, index) => tag !== str && index !== i);
+    let tags = this.state.tags.filter(
+      (tag, index) => tag !== str && index !== i
+    );
     this.setState((prevState) => ({
-      tags
-    }))
-  }
+      tags,
+    }));
+  };
 
   // search tasks based on input string
   searchTodos = (e) => {
@@ -172,8 +183,7 @@ class List extends Component {
           updatedDate
             ?.toString()
             .toLowerCase()
-            .includes(searchQuery.toLowerCase()) ||
-          tags?.filter((tag) => tag?.toString().toLowerCase() === tag.toLowerCase())
+            .includes(searchQuery.toLowerCase())
         );
       });
 
@@ -266,7 +276,7 @@ class List extends Component {
       isTaskEmpty,
       isTitleEmpty,
       tags,
-      tag
+      tag,
     } = this.state;
 
     const data =
@@ -298,7 +308,7 @@ class List extends Component {
                 className="border-2 rounded-md  py-2 px-4 w-full"
                 onChange={(e) => this.handleChange(e)}
                 placeholder="Enter keyword you want search"
-                isempty={false}
+                isempty={0}
               />
 
               <button
@@ -341,10 +351,10 @@ class List extends Component {
                 <Input
                   type="checkbox"
                   checked={this.state.startColor}
-                  onClick={this.handleColor}
+                  onChange={this.handleColor}
                   name="startColor"
                   id="startColor"
-                  isempty={false}
+                  isempty={0}
                   errmsg=""
                 />
               </div>
@@ -356,8 +366,15 @@ class List extends Component {
                 <h1>No record found</h1>
               ) : (
                 data?.map((todo, index) => {
-                  const { id, task, title, createdAt, status, updatedDate, tags } =
-                    todo;
+                  const {
+                    id,
+                    task,
+                    title,
+                    createdAt,
+                    status,
+                    updatedDate,
+                    tags,
+                  } = todo;
 
                   return (
                     <Card
