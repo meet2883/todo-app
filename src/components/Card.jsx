@@ -20,6 +20,7 @@ class Card extends Component {
       updatedDate,
       startColor,
       tags,
+      handleclick
     } = this.props;
 
     const obj = {
@@ -41,18 +42,6 @@ class Card extends Component {
                         : "bg-white text-black"
                     }`}
         onMouseOver={() => {
-          // solution 1
-          // let number;
-          // let index = this.props.index + 1;
-
-          // if(index > 7) {
-          //     let diff = index / 7;
-          //     number = Math.floor(diff);
-          //     console.log(number)
-          // } else {
-          //     number = index;
-          // }
-
           // solution 2
           let number = Math.floor(Math.random() * (1, 7) + 1);
           let bg = obj[number];
@@ -94,6 +83,7 @@ class Card extends Component {
                 <div
                   key={index}
                   className={`${bg} flex items-center gap-1 rounded-full px-6 py-2 text-white`}
+                  onClick={(e) => handleclick(e,tag)}
                 >
                   {tag}
                 </div>

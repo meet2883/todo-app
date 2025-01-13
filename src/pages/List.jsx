@@ -20,11 +20,14 @@ class List extends Component {
       tag: "",
       tags: [],
       status: "",
+      isTagFilter: false,
+      tagQuery: "",
       filterValues: [],
       filterQuery: "",
       startColor: false,
       isTaskEmpty: false,
       isTitleEmpty: false,
+      isNoData : false
     };
     this.fetchTodoList = this.fetchTodoList.bind(this);
     this.deleteTodo = this.deleteTodo.bind(this);
@@ -38,6 +41,7 @@ class List extends Component {
     this.closeModel = this.closeModel.bind(this);
     this.handleColor = this.handleColor.bind(this);
     this.addTag = this.addTag.bind(this);
+    this.setFilterTagQuery = this.setFilterTagQuery.bind(this);
     this.handleCheckFieldValue = this.handleCheckFieldValue.bind(this);
   }
 
@@ -180,9 +184,15 @@ class List extends Component {
     }));
   };
 
+  setFilterTagQuery = (e, query) => {
+    e.preventDefault()
+    let searchQuery = query;
+    this.setState({ searchQuery })
+    this.searchTodos(e);
+  }
+
   // search tasks based on input string
-  searchTodos = (e) => {
-    e.preventDefault();
+  searchTodos = () => {
     const { searchQuery, todos, filterValues } = this.state;
 
     let data = filterValues.length > 0 ? filterValues : todos;
@@ -200,37 +210,55 @@ class List extends Component {
           updatedDate
             ?.toString()
             .toLowerCase()
-            .includes(searchQuery.toLowerCase())
+            .includes(searchQuery.toLowerCase()) ||
+          tags?.toString().toLowerCase().includes(searchQuery.toLowerCase())
         );
       });
 
-      this.setState({
-        searchResults: filterResults,
-      });
+      if(filterResults.length > 0){
+        this.setState({
+          searchResults: filterResults,
+          isNoData : false
+        });
+      } else {
+        this.setState({
+          searchResults: [],
+          isNoData : true
+        });
+      }
     }
   };
 
   //   filter tasks based on status
-  getfilterValues = (e) => {
+  getfilterValues = () => {
     // e.preventDefault();
-    let query = e.target.value;
-    this.setState({ filterQuery: query });
-    const { searchResults, todos } = this.state;
+    // let query = e.target.value;
+    // this.setState({ filterQuery: query });
+    const { searchResults, todos, searchQuery, filterQuery } = this.state;
 
     let filterData = searchResults.length > 0 ? searchResults : todos;
 
-    if (query === "All") {
+    if (filterQuery === "All") {
       this.setState({
         filterValues: [],
       });
     } else {
       const filterResults = filterData?.filter((todo) => {
-        return todo?.status === query;
+        return todo?.status === filterQuery;
       });
 
-      this.setState({
-        filterValues: filterResults,
-      });
+      if(filterResults.length > 0){
+        this.setState({
+          filterValues: filterResults,
+          isNoData : false
+        });
+      } else {
+        this.setState({
+          filterValues: [],
+          isNoData : true
+        });
+      }
+
     }
   };
 
@@ -240,6 +268,7 @@ class List extends Component {
     this.setState({
       searchQuery: "",
       searchResults: [],
+      isNoData : false
     });
   };
 
@@ -274,6 +303,16 @@ class List extends Component {
     document.addEventListener("keypress", this.handleKeyboardShortcuts);
   };
 
+  componentDidUpdate = (prevProps, prevState) => {
+    if(prevState.searchQuery !== this.state.searchQuery){
+      this.searchTodos();
+    }
+
+    if(prevState.filterQuery !== this.state.filterQuery){
+      this.getfilterValues()
+    }
+  }
+
   componentWillUnmount = () => {
     document.removeEventListener("keypress", this.handleKeyboardShortcuts);
   };
@@ -294,6 +333,7 @@ class List extends Component {
       isTitleEmpty,
       tags,
       tag,
+      isNoData
     } = this.state;
 
     const data =
@@ -328,12 +368,12 @@ class List extends Component {
                 isempty={0}
               />
 
-              <button
+              {/* <button
                 type="submit"
                 className="border border-none bg-blue-800 w-24 h-11 rounded-sm font-bold text-white"
               >
                 Search
-              </button>
+              </button> */}
 
               <button
                 type="reset"
@@ -352,7 +392,7 @@ class List extends Component {
                   name="filterQuery"
                   value={filterQuery}
                   onChange={(e) => {
-                    this.getfilterValues(e);
+                    this.setState({ filterQuery : e.target.value})
                   }}
                   className="w-28 h-10 p-1 border-2 rounded-sm cursor-pointer"
                 >
@@ -379,7 +419,7 @@ class List extends Component {
 
             {/* display todo's list */}
             <div className="grid grid-cols-1 gap-3">
-              {data.length === 0 ? (
+              {(data.length === 0 || isNoData ) ? (
                 <h1>No record found</h1>
               ) : (
                 data?.map((todo, index) => {
@@ -407,6 +447,7 @@ class List extends Component {
                       status={status}
                       updatedDate={updatedDate}
                       startColor={this.state.startColor}
+                      handleclick={this.setFilterTagQuery}
                     />
                   );
                 })
