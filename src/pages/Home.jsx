@@ -25,9 +25,26 @@ class Home extends Component {
     this.addTag = this.addTag.bind(this);
     this.removeTag = this.removeTag.bind(this);
     this.handleKeyboardShortcuts = this.handleKeyboardShortcuts.bind(this);
+    this.handleCheckFieldValue = this.handleCheckFieldValue.bind(this);
   }
 
+  handleCheckFieldValue = (e) => {
+    const { name, value } = e.target;
+    if (name === "title" && value === "") {
+      this.setState({ isTitleEmpty: true });
+    } else if (name === "title" && value !== "") {
+      this.setState({ isTitleEmpty: false });
+    }
+
+    if (name === "task" && value === "") {
+      this.setState({ isTaskEmpty: true });
+    } else if (name === "task" && value !== "") {
+      this.setState({ isTaskEmpty: false });
+    }
+  };
+
   handleChange = (e) => {
+    this.handleCheckFieldValue(e)
     const { name, value } = e.target;
     this.setState({
       [name]: value,
@@ -73,13 +90,8 @@ class Home extends Component {
       console.log(sentence);
       // let utterance = new SpeechSynthesisUtterance(sentence);
       // speechSynthesis.speak(utterance);
-      console.log(
-        `${sentence}`
-      );
-      toast.info(
-        `${sentence}`,
-        { autoClose: 2000 }
-      );
+      console.log(`${sentence}`);
+      toast.info(`${sentence}`, { autoClose: 2000 });
       return;
     }
   };
@@ -192,6 +204,7 @@ class Home extends Component {
                   isTitleEmpty && "border-red-700"
                 } border-2 rounded-md  py-2 px-4`}
                 onChange={(e) => this.handleChange(e)}
+                onBlur={this.handleCheckFieldValue}
                 isempty={this.state.isTitleEmpty ? 1 : 0}
                 errmsg="please add the title"
               />
@@ -206,6 +219,7 @@ class Home extends Component {
                   isTitleEmpty && "border-red-700"
                 } border-2 rounded-md  py-2 px-4`}
                 onChange={(e) => this.handleChange(e)}
+                onBlur={this.handleCheckFieldValue}
                 isempty={this.state.isTaskEmpty ? 1 : 0}
                 errmsg="please add the task"
               />

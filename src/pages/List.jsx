@@ -38,6 +38,7 @@ class List extends Component {
     this.closeModel = this.closeModel.bind(this);
     this.handleColor = this.handleColor.bind(this);
     this.addTag = this.addTag.bind(this);
+    this.handleCheckFieldValue = this.handleCheckFieldValue.bind(this);
   }
 
   closeModel = () => {
@@ -136,9 +137,25 @@ class List extends Component {
       .catch((err) => console.log(err));
   };
 
+  handleCheckFieldValue = (e) => {
+    const { name, value } = e.target;
+    if (name === "title" && value === "") {
+      this.setState({ isTitleEmpty: true });
+    } else if (name === "title" && value !== "") {
+      this.setState({ isTitleEmpty: false });
+    }
+
+    if (name === "task" && value === "") {
+      this.setState({ isTaskEmpty: true });
+    } else if (name === "task" && value !== "") {
+      this.setState({ isTaskEmpty: false });
+    }
+  };
+
   // set values while element change
   handleChange = (e) => {
     e.preventDefault();
+    this.handleCheckFieldValue(e);
     const { name, value } = e.target;
     this.setState({
       [name]: value,
