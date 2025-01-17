@@ -5,13 +5,15 @@ import { Link } from "react-router-dom";
 import UpdateForm from "../components/UpdateForm";
 import { Input } from "../components/Input";
 import { makeReq } from "../Utils/makeReq";
+import { connect } from "react-redux";
+import { fetchTodo, fetchTodos } from "../features/todoSlice";
 
 class List extends Component {
   constructor(props) {
     super(props);
     this.state = {
       todos: [],
-      isUpdate: false,
+      isOpenModel : false,
       updateId: "",
       searchResults: [],
       searchQuery: "",
@@ -29,85 +31,24 @@ class List extends Component {
       isTitleEmpty: false,
       isNoData : false
     };
-    this.fetchTodoList = this.fetchTodoList.bind(this);
     this.deleteTodo = this.deleteTodo.bind(this);
-    this.fetchTodo = this.fetchTodo.bind(this);
-    this.updateTodo = this.updateTodo.bind(this);
     this.searchTodos = this.searchTodos.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.cancelSearch = this.cancelSearch.bind(this);
     this.handleKeyboardShortcuts = this.handleKeyboardShortcuts.bind(this);
     this.getfilterValues = this.getfilterValues.bind(this);
+    this.openModel = this.openModel.bind(this);
     this.closeModel = this.closeModel.bind(this);
     this.handleColor = this.handleColor.bind(this);
-    this.addTag = this.addTag.bind(this);
     this.setFilterTagQuery = this.setFilterTagQuery.bind(this);
-    this.handleCheckFieldValue = this.handleCheckFieldValue.bind(this);
+  }
+
+  openModel = () => {
+    this.setState({ isOpenModel : true })
   }
 
   closeModel = () => {
-    this.setState({ isUpdate: false });
-  };
-
-  // fetch all tasks list while component loaded
-  fetchTodoList = () => {
-    makeReq({ method: "GET", endpoint: "todos" })
-      .then((res) => {
-        this.setState({ todos: res.data });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  // update task based on id
-  updateTodo = async (e) => {
-    e.preventDefault();
-
-    const { title, task, updateId, tags } = this.state;
-    let isTitleEmpty = false;
-    let isTaskEmpty = false;
-
-    if (title === "") isTitleEmpty = true;
-    if (task === "") isTaskEmpty = true;
-
-    this.setState({ isTaskEmpty, isTitleEmpty });
-
-    if (isTaskEmpty == false && isTitleEmpty == false) {
-      let date = new Date();
-
-      // save the task updated date while updating
-      const updatedDate = `${date.getDate()}-${
-        date.getMonth() + 1
-      }-${date.getFullYear()}`;
-
-      let data = {
-        title: this.state.title,
-        task: this.state.task,
-        status: this.state.status,
-        updatedDate,
-        tags,
-      };
-
-      makeReq({ method: "PATCH", endpoint: `todos/${updateId}`, data })
-        .then(() => {
-          this.fetchTodoList();
-          toast.success("To-do updated.", { autoClose: 2000 });
-        })
-        .catch((err) => {
-          console.log(err);
-          toast.error("Failed to update To-do.", { autoClose: 2000 });
-        })
-        .finally(() => {
-          this.setState({
-            isUpdate: false,
-            task: "",
-            title: "",
-            tag: "",
-            tags: [],
-          });
-        });
-    }
+    this.setState({ isOpenModel: false });
   };
 
   // delete task based on id
@@ -125,63 +66,14 @@ class List extends Component {
       });
   };
 
-  // fetch task based on id
-  fetchTodo = async (id) => {
-    makeReq({ method: "GET", endpoint: `todos/${id}` })
-      .then((res) => {
-        this.setState({
-          title: res?.data?.title,
-          task: res?.data?.task,
-          isUpdate: true,
-          updateId: res?.data?.id,
-          status: res?.data?.status,
-          tags: res?.data?.tags,
-        });
-      })
-      .catch((err) => console.log(err));
-  };
-
-  handleCheckFieldValue = (e) => {
-    const { name, value } = e.target;
-    if (name === "title" && value === "") {
-      this.setState({ isTitleEmpty: true });
-    } else if (name === "title" && value !== "") {
-      this.setState({ isTitleEmpty: false });
-    }
-
-    if (name === "task" && value === "") {
-      this.setState({ isTaskEmpty: true });
-    } else if (name === "task" && value !== "") {
-      this.setState({ isTaskEmpty: false });
-    }
-  };
-
   // set values while element change
   handleChange = (e) => {
     e.preventDefault();
-    this.handleCheckFieldValue(e);
+    // this.handleCheckFieldValue(e);
     const { name, value } = e.target;
     this.setState({
       [name]: value,
     });
-  };
-
-  addTag = (e) => {
-    e.preventDefault();
-    if (this.state.tag !== "") {
-      this.state.tags.push(this.state.tag);
-      this.setState((prevState) => ({ tag: "" }));
-    }
-  };
-
-  removeTag = (e, i, str) => {
-    e.preventDefault();
-    let tags = this.state.tags.filter(
-      (tag, index) => tag !== str && index !== i
-    );
-    this.setState((prevState) => ({
-      tags,
-    }));
   };
 
   setFilterTagQuery = (e, query) => {
@@ -195,7 +87,7 @@ class List extends Component {
   searchTodos = () => {
     const { searchQuery, todos, filterValues } = this.state;
 
-    let data = filterValues.length > 0 ? filterValues : todos;
+    let data = filterValues.length > 0 ? filterValues : this.props.todos;
 
     if (searchQuery !== "") {
       const filterResults = data?.filter((todo) => {
@@ -231,12 +123,9 @@ class List extends Component {
 
   //   filter tasks based on status
   getfilterValues = () => {
-    // e.preventDefault();
-    // let query = e.target.value;
-    // this.setState({ filterQuery: query });
-    const { searchResults, todos, searchQuery, filterQuery } = this.state;
+    const { searchResults, filterQuery } = this.state;
 
-    let filterData = searchResults.length > 0 ? searchResults : todos;
+    let filterData = searchResults.length > 0 ? searchResults : this.props.todos;
 
     if (filterQuery === "All") {
       this.setState({
@@ -288,22 +177,19 @@ class List extends Component {
     }
   };
 
-  changeIsUpdate = () => {
-    this.setState({
-      isUpdate: false,
-    });
-  };
-
   handleColor = () => {
     this.setState({ startColor: !this.state.startColor });
   };
 
-  componentDidMount = () => {
-    this.fetchTodoList();
+  componentDidMount = (prevProps, prevState) => {
+    this.props.fetchTodos();
     document.addEventListener("keypress", this.handleKeyboardShortcuts);
   };
 
   componentDidUpdate = (prevProps, prevState) => {
+    if(prevProps.isUpdate !== this.props.isUpdate){
+      this.props.fetchTodos();
+    }
     if(prevState.searchQuery !== this.state.searchQuery){
       this.searchTodos();
     }
@@ -320,19 +206,10 @@ class List extends Component {
   render() {
     // state destructuring
     const {
-      todos,
       searchResults,
       searchQuery,
-      isUpdate,
-      task,
-      title,
-      status,
       filterQuery,
       filterValues,
-      isTaskEmpty,
-      isTitleEmpty,
-      tags,
-      tag,
       isNoData
     } = this.state;
 
@@ -341,11 +218,11 @@ class List extends Component {
         ? searchResults
         : filterValues.length > 0
         ? filterValues
-        : todos;
+        : this.props.todos;
 
     return (
       <div>
-        <div className={`${isUpdate ? "opacity-20" : "opacity-100"}`}>
+        <div className={`${this.state.isOpenModel ? "opacity-20" : "opacity-100"}`}>
           <Link to={"/"} className="underline-offset-4">
             Home
           </Link>
@@ -367,13 +244,6 @@ class List extends Component {
                 placeholder="Enter keyword you want search"
                 isempty={0}
               />
-
-              {/* <button
-                type="submit"
-                className="border border-none bg-blue-800 w-24 h-11 rounded-sm font-bold text-white"
-              >
-                Search
-              </button> */}
 
               <button
                 type="reset"
@@ -441,11 +311,12 @@ class List extends Component {
                       task={task}
                       title={title}
                       tags={tags}
-                      fetchTodo={this.fetchTodo}
+                      fetchTodo={this.props.fetchTodo}
                       deleteTodo={this.deleteTodo}
                       createdAt={createdAt}
                       status={status}
                       updatedDate={updatedDate}
+                      openModel={this.openModel}
                       startColor={this.state.startColor}
                       handleclick={this.setFilterTagQuery}
                     />
@@ -456,21 +327,9 @@ class List extends Component {
           </div>
         </div>
 
-        {isUpdate && (
+        {this.state.isOpenModel && (
           <UpdateForm
-            title={title}
-            task={task}
-            status={status}
-            tags={tags}
-            tag={tag}
-            isTitleEmpty={isTitleEmpty}
-            isTaskEmpty={isTaskEmpty}
-            removeTag={this.removeTag}
-            addTag={this.addTag}
-            updateTodo={this.updateTodo}
             closeModel={this.closeModel}
-            handleChange={this.handleChange}
-            changeIsUpdate={this.changeIsUpdate}
           />
         )}
       </div>
@@ -478,4 +337,17 @@ class List extends Component {
   }
 }
 
-export default List;
+const mapStateToProps = (state, ownProps) => {
+  // console.log(state)
+  const { isError, error, isLoading, todos, isUpdate } = state.todo;
+  return { isError, error, isLoading, todos, isUpdate}
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetchTodos : () => dispatch(fetchTodos()),
+    fetchTodo : (id) => dispatch(fetchTodo(id))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(List);

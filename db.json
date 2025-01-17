@@ -1,47 +1,26 @@
 {
   "todos": [
     {
-      "id": "3980",
-      "title": "hello23",
-      "task": "hello",
-      "createdAt": "10-1-2025",
-      "status": "Completed",
-      "tags": [
-        "hello"
-      ],
-      "updatedDate": "13-1-2025"
-    },
-    {
       "id": "1413",
-      "title": "hello",
+      "title": "hello123",
       "task": "this is 13th januaray",
       "createdAt": "13-1-2025",
-      "status": "In Progress",
+      "status": "Completed",
       "tags": [
         "kite"
-      ]
+      ],
+      "updatedDate": "17-1-2025"
     },
     {
       "id": "3e9b",
       "title": "this is new todo",
       "task": "add validation in it",
       "createdAt": "13-1-2025",
-      "status": "In Progress",
+      "status": "To-do",
       "tags": [
         "kite"
       ],
       "updatedDate": "13-1-2025"
-    },
-    {
-      "id": "ab54",
-      "title": "this is title",
-      "task": "this is task",
-      "createdAt": "13-1-2025",
-      "status": "In Progress",
-      "tags": [
-        "task",
-        "task2"
-      ]
     }
   ]
 }
