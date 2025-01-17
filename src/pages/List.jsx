@@ -7,13 +7,15 @@ import { Input } from "../components/Input";
 import { makeReq } from "../Utils/makeReq";
 import { connect } from "react-redux";
 import { fetchTodo, fetchTodos } from "../features/todoSlice";
+import TableView from "../components/TableView";
 
 class List extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      view: "list",
       todos: [],
-      isOpenModel : false,
+      isOpenModel: false,
       updateId: "",
       searchResults: [],
       searchQuery: "",
@@ -29,7 +31,7 @@ class List extends Component {
       startColor: false,
       isTaskEmpty: false,
       isTitleEmpty: false,
-      isNoData : false
+      isNoData: false,
     };
     this.deleteTodo = this.deleteTodo.bind(this);
     this.searchTodos = this.searchTodos.bind(this);
@@ -44,8 +46,8 @@ class List extends Component {
   }
 
   openModel = () => {
-    this.setState({ isOpenModel : true })
-  }
+    this.setState({ isOpenModel: true });
+  };
 
   closeModel = () => {
     this.setState({ isOpenModel: false });
@@ -77,11 +79,11 @@ class List extends Component {
   };
 
   setFilterTagQuery = (e, query) => {
-    e.preventDefault()
+    e.preventDefault();
     let searchQuery = query;
-    this.setState({ searchQuery })
+    this.setState({ searchQuery });
     this.searchTodos(e);
-  }
+  };
 
   // search tasks based on input string
   searchTodos = () => {
@@ -107,15 +109,15 @@ class List extends Component {
         );
       });
 
-      if(filterResults.length > 0){
+      if (filterResults.length > 0) {
         this.setState({
           searchResults: filterResults,
-          isNoData : false
+          isNoData: false,
         });
       } else {
         this.setState({
           searchResults: [],
-          isNoData : true
+          isNoData: true,
         });
       }
     }
@@ -125,7 +127,8 @@ class List extends Component {
   getfilterValues = () => {
     const { searchResults, filterQuery } = this.state;
 
-    let filterData = searchResults.length > 0 ? searchResults : this.props.todos;
+    let filterData =
+      searchResults.length > 0 ? searchResults : this.props.todos;
 
     if (filterQuery === "All") {
       this.setState({
@@ -136,18 +139,17 @@ class List extends Component {
         return todo?.status === filterQuery;
       });
 
-      if(filterResults.length > 0){
+      if (filterResults.length > 0) {
         this.setState({
           filterValues: filterResults,
-          isNoData : false
+          isNoData: false,
         });
       } else {
         this.setState({
           filterValues: [],
-          isNoData : true
+          isNoData: true,
         });
       }
-
     }
   };
 
@@ -157,7 +159,7 @@ class List extends Component {
     this.setState({
       searchQuery: "",
       searchResults: [],
-      isNoData : false
+      isNoData: false,
     });
   };
 
@@ -187,17 +189,17 @@ class List extends Component {
   };
 
   componentDidUpdate = (prevProps, prevState) => {
-    if(prevProps.isUpdate !== this.props.isUpdate){
+    if (prevProps.isUpdate !== this.props.isUpdate) {
       this.props.fetchTodos();
     }
-    if(prevState.searchQuery !== this.state.searchQuery){
+    if (prevState.searchQuery !== this.state.searchQuery) {
       this.searchTodos();
     }
 
-    if(prevState.filterQuery !== this.state.filterQuery){
-      this.getfilterValues()
+    if (prevState.filterQuery !== this.state.filterQuery) {
+      this.getfilterValues();
     }
-  }
+  };
 
   componentWillUnmount = () => {
     document.removeEventListener("keypress", this.handleKeyboardShortcuts);
@@ -205,13 +207,8 @@ class List extends Component {
 
   render() {
     // state destructuring
-    const {
-      searchResults,
-      searchQuery,
-      filterQuery,
-      filterValues,
-      isNoData
-    } = this.state;
+    const { searchResults, searchQuery, filterQuery, filterValues, isNoData } =
+      this.state;
 
     const data =
       searchResults.length > 0
@@ -222,7 +219,9 @@ class List extends Component {
 
     return (
       <div>
-        <div className={`${this.state.isOpenModel ? "opacity-20" : "opacity-100"}`}>
+        <div
+          className={`${this.state.isOpenModel ? "opacity-20" : "opacity-100"}`}
+        >
           <Link to={"/"} className="underline-offset-4">
             Home
           </Link>
@@ -253,8 +252,24 @@ class List extends Component {
               </button>
             </form>
 
-            {/* form for filter the value */}
+            <div className="flex gap-3 items-center">
+              <span>Select your list view :</span>
+              <select
+                name="view"
+                value={this.state.view}
+                className="w-28 h-10 p-1 border-2 rounded-sm cursor-pointer"
+                onChange={(e) => {
+                  this.setState((prevState) => ({
+                    view : e.target.value
+                  }))
+                }}
+              >
+                <option value="list">List</option>
+                <option value="table">Table</option>
+              </select>
+            </div>
 
+            {/* form for filter the value */}
             <form className="flex gap-5 items-center font-bold">
               <div className="flex gap-1 items-center">
                 <span>Status :</span>
@@ -262,7 +277,7 @@ class List extends Component {
                   name="filterQuery"
                   value={filterQuery}
                   onChange={(e) => {
-                    this.setState({ filterQuery : e.target.value})
+                    this.setState({ filterQuery: e.target.value });
                   }}
                   className="w-28 h-10 p-1 border-2 rounded-sm cursor-pointer"
                 >
@@ -288,50 +303,50 @@ class List extends Component {
             </form>
 
             {/* display todo's list */}
-            <div className="grid grid-cols-1 gap-3">
-              {(data.length === 0 || isNoData ) ? (
-                <h1>No record found</h1>
-              ) : (
-                data?.map((todo, index) => {
-                  const {
-                    id,
-                    task,
-                    title,
-                    createdAt,
-                    status,
-                    updatedDate,
-                    tags,
-                  } = todo;
+            {this.state.view === "list" ? (
+              <div className="grid grid-cols-1 gap-3">
+                {data.length === 0 || isNoData ? (
+                  <h1>No record found</h1>
+                ) : (
+                  data?.map((todo, index) => {
+                    const {
+                      id,
+                      task,
+                      title,
+                      createdAt,
+                      status,
+                      updatedDate,
+                      tags,
+                    } = todo;
 
-                  return (
-                    <Card
-                      index={index}
-                      key={id}
-                      id={id}
-                      task={task}
-                      title={title}
-                      tags={tags}
-                      fetchTodo={this.props.fetchTodo}
-                      deleteTodo={this.deleteTodo}
-                      createdAt={createdAt}
-                      status={status}
-                      updatedDate={updatedDate}
-                      openModel={this.openModel}
-                      startColor={this.state.startColor}
-                      handleclick={this.setFilterTagQuery}
-                    />
-                  );
-                })
-              )}
-            </div>
+                    return (
+                      <Card
+                        index={index}
+                        key={id}
+                        id={id}
+                        task={task}
+                        title={title}
+                        tags={tags}
+                        fetchTodo={this.props.fetchTodo}
+                        deleteTodo={this.deleteTodo}
+                        createdAt={createdAt}
+                        status={status}
+                        updatedDate={updatedDate}
+                        openModel={this.openModel}
+                        startColor={this.state.startColor}
+                        handleclick={this.setFilterTagQuery}
+                      />
+                    );
+                  })
+                )}
+              </div>
+            ) : (
+              <TableView data={data} />
+            )}
           </div>
         </div>
 
-        {this.state.isOpenModel && (
-          <UpdateForm
-            closeModel={this.closeModel}
-          />
-        )}
+        {this.state.isOpenModel && <UpdateForm closeModel={this.closeModel} />}
       </div>
     );
   }
@@ -340,14 +355,14 @@ class List extends Component {
 const mapStateToProps = (state, ownProps) => {
   // console.log(state)
   const { isError, error, isLoading, todos, isUpdate } = state.todo;
-  return { isError, error, isLoading, todos, isUpdate}
-}
+  return { isError, error, isLoading, todos, isUpdate };
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetchTodos : () => dispatch(fetchTodos()),
-    fetchTodo : (id) => dispatch(fetchTodo(id))
-  }
-}
+    fetchTodos: () => dispatch(fetchTodos()),
+    fetchTodo: (id) => dispatch(fetchTodo(id)),
+  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(List);

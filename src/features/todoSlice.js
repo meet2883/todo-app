@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { makeReq } from "../Utils/makeReq";
 import axios from "axios";
 
 let url = `http://localhost:3000`;

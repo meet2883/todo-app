@@ -18,6 +18,13 @@ class Home extends Component {
       status: "To-do",
       isLoading: false,
       isError: false,
+      subtasks : [],
+      subtask : {
+        title : "",
+        task : "",
+        tag : "",
+        tags : []
+      }
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
