@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import { fetchTodo, fetchTodos } from "../features/todoSlice";
 import TableView from "../components/TableView";
 import ListView from "../components/ListView";
+import Pagination from "../components/Pagination";
 
 class List extends Component {
   constructor(props) {
@@ -190,15 +191,17 @@ class List extends Component {
 
   render() {
     // state destructuring
-    const { searchResults, searchQuery, filterQuery, filterValues, isNoData } =
+    const { searchResults, searchQuery, filterQuery, filterValues, isNoData, recordsPerpage } =
       this.state;
 
-    const data =
+    let data =
       searchResults.length > 0
         ? searchResults
         : filterValues.length > 0
         ? filterValues
         : this.props.todos;
+
+    
 
     return (
       <div>
