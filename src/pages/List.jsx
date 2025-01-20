@@ -1,13 +1,12 @@
 import { toast } from "react-toastify";
 import { Component } from "react";
-import Card from "../components/Card";
 import { Link } from "react-router-dom";
 import UpdateForm from "../components/UpdateForm";
 import { Input } from "../components/Input";
-import { makeReq } from "../Utils/makeReq";
 import { connect } from "react-redux";
 import { fetchTodo, fetchTodos } from "../features/todoSlice";
 import TableView from "../components/TableView";
+import ListView from "../components/ListView";
 
 class List extends Component {
   constructor(props) {
@@ -33,7 +32,6 @@ class List extends Component {
       isTitleEmpty: false,
       isNoData: false,
     };
-    this.deleteTodo = this.deleteTodo.bind(this);
     this.searchTodos = this.searchTodos.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.cancelSearch = this.cancelSearch.bind(this);
@@ -51,21 +49,6 @@ class List extends Component {
 
   closeModel = () => {
     this.setState({ isOpenModel: false });
-  };
-
-  // delete task based on id
-  deleteTodo = async (id) => {
-    makeReq({ method: "DELETE", endpoint: `todos/${id}` })
-      .then(() => {
-        this.setState((prevState) => ({
-          todos: prevState.todos.filter((todo) => todo?.id !== id),
-        }));
-        toast.info("To-do deleted.", { autoClose: 2000 });
-      })
-      .catch((error) => {
-        console.log(error);
-        toast.error("Failed to delete To-do.", { autoClose: 2000 });
-      });
   };
 
   // set values while element change
@@ -260,8 +243,8 @@ class List extends Component {
                 className="w-28 h-10 p-1 border-2 rounded-sm cursor-pointer"
                 onChange={(e) => {
                   this.setState((prevState) => ({
-                    view : e.target.value
-                  }))
+                    view: e.target.value,
+                  }));
                 }}
               >
                 <option value="list">List</option>
@@ -303,45 +286,17 @@ class List extends Component {
             </form>
 
             {/* display todo's list */}
-            {this.state.view === "list" ? (
-              <div className="grid grid-cols-1 gap-3">
-                {data.length === 0 || isNoData ? (
-                  <h1>No record found</h1>
-                ) : (
-                  data?.map((todo, index) => {
-                    const {
-                      id,
-                      task,
-                      title,
-                      createdAt,
-                      status,
-                      updatedDate,
-                      tags,
-                    } = todo;
-
-                    return (
-                      <Card
-                        index={index}
-                        key={id}
-                        id={id}
-                        task={task}
-                        title={title}
-                        tags={tags}
-                        fetchTodo={this.props.fetchTodo}
-                        deleteTodo={this.deleteTodo}
-                        createdAt={createdAt}
-                        status={status}
-                        updatedDate={updatedDate}
-                        openModel={this.openModel}
-                        startColor={this.state.startColor}
-                        handleclick={this.setFilterTagQuery}
-                      />
-                    );
-                  })
-                )}
-              </div>
+            {data.length === 0 || isNoData ? (
+              <h1>No Record Found</h1>
+            ) : this.state.view === "list" ? (
+              <ListView
+                data={data}
+                openModel={this.openModel}
+                startColor={this.state.startColor}
+                handleclick={this.setFilterTagQuery}
+              />
             ) : (
-              <TableView data={data} />
+              <TableView data={data} openModel={this.openModel} />
             )}
           </div>
         </div>
