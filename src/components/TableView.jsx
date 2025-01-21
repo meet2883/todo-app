@@ -22,12 +22,16 @@ class TableView extends Component {
     this.handleRecPerPage = this.handleRecPerPage.bind(this);
   }
 
+  // this function calculate the records per page and how many pages are created based on that
   handleRecPerPage = (e) => {
     e.preventDefault();
     
     let recPerpage = parseInt(e.target.value);
     let totalPages = Math.ceil(this.props.data.length / recPerpage);
     let pageNo = this.state.pageNo;
+    if(totalPages < pageNo){
+      pageNo = totalPages
+    }
     const { startIndex, endIndex } = this.calRecIndex(pageNo, recPerpage);
     this.setState((prevState) => ({
       recPerpage,
@@ -38,6 +42,7 @@ class TableView extends Component {
     }));
   };
 
+  // calculate start and end Index of the page based on the pageNo and records per page
   calRecIndex = (pageNo, recPerpage) => {
     let startIndex, endIndex;
    
@@ -51,6 +56,7 @@ class TableView extends Component {
     return {startIndex, endIndex};
   }
 
+  // call when next page button is clicked
   nextPage = () => {
     if (this.state.pageNo !== this.state.totalPages) {
       let pageNo = this.state.pageNo + 1;
@@ -64,6 +70,7 @@ class TableView extends Component {
     }
   };
 
+  // call when previous page button is clicked
   prevPage = () => {
     if (this.state.pageNo !== 1) {
       let pageNo = this.state.pageNo - 1
