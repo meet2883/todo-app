@@ -1,4 +1,6 @@
 import { Component } from "react";
+import { FaAnglesLeft } from "react-icons/fa6";
+import { FaAnglesRight } from "react-icons/fa6";
 
 class Pagination extends Component {
   constructor(props) {
@@ -24,9 +26,13 @@ class Pagination extends Component {
         </div>
 
         <div className="flex flex-row gap-3">
-            <button onClick={this.props.prevPage}>Prev</button>
+            <button onClick={this.props.prevPage}>
+              <FaAnglesLeft/>
+            </button>
             <span>Page : {this.props.pageNo} out of {this.props.totalPages}</span>
-            <button onClick={this.props.nextPage}>Next</button>
+            <button onClick={this.props.nextPage}>
+              <FaAnglesRight/>
+            </button>
         </div>
       </div>
     );

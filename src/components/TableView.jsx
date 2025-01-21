@@ -1,8 +1,8 @@
 import { Component } from "react";
+import Pagination from "./Pagination";
 import { connect } from "react-redux";
 import { BsTrash, BsPencilSquare } from "react-icons/bs";
 import { deleteTodo, fetchTodo } from "../features/todoSlice";
-import Pagination from "./Pagination";
 
 class TableView extends Component {
   constructor(props) {
@@ -18,16 +18,17 @@ class TableView extends Component {
     };
     this.prevPage = this.prevPage.bind(this);
     this.nextPage = this.nextPage.bind(this);
+    this.calRecIndex = this.calRecIndex.bind(this);
     this.handleRecPerPage = this.handleRecPerPage.bind(this);
   }
 
   handleRecPerPage = (e) => {
     e.preventDefault();
+    
     let recPerpage = parseInt(e.target.value);
     let totalPages = Math.ceil(this.props.data.length / recPerpage);
-    let startIndex = 0;
-    let pageNo = 1;
-    let endIndex = recPerpage;
+    let pageNo = this.state.pageNo;
+    const { startIndex, endIndex } = this.calRecIndex(pageNo, recPerpage);
     this.setState((prevState) => ({
       recPerpage,
       totalPages,
@@ -37,46 +38,55 @@ class TableView extends Component {
     }));
   };
 
+  calRecIndex = (pageNo, recPerpage) => {
+    let startIndex, endIndex;
+   
+    if(pageNo > 1){
+      endIndex = pageNo * recPerpage;
+      startIndex = endIndex - recPerpage;
+    } else {
+      startIndex = 0;
+      endIndex = recPerpage;
+    }
+    return {startIndex, endIndex};
+  }
+
   nextPage = () => {
     if (this.state.pageNo !== this.state.totalPages) {
+      let pageNo = this.state.pageNo + 1;
+      const { startIndex, endIndex } = this.calRecIndex(pageNo, this.state.recPerpage);
+
       this.setState((prevState) => ({
-        pageNo: this.state.pageNo + 1,
-        startIndex: this.state.endIndex,
-        endIndex: this.state.endIndex + this.state.recPerpage,
+        pageNo,
+        startIndex,
+        endIndex,
       }));
     }
   };
 
   prevPage = () => {
     if (this.state.pageNo !== 1) {
+      let pageNo = this.state.pageNo - 1
+      const { startIndex, endIndex } = this.calRecIndex(pageNo, this.state.recPerpage);
       this.setState((prevState) => ({
-        pageNo: this.state.pageNo - 1,
-        startIndex: this.state.startIndex - this.state.recPerpage,
-        endIndex: this.state.endIndex - this.state.recPerpage,
+        pageNo,
+        startIndex,
+        endIndex,
       }));
     }
   };
 
-  componentDidMount = () => {
-    this.setState({ data: this.props.data });
-  };
-
   componentDidUpdate = (prevProps, prevState) => {
+    
     if (prevProps.todo !== this.props.todo && this.props.isUpdate) {
       this.props.openModel();
     }
-
-    // if(prevState.pageNo !== this.state.pageNo || prevState.recPerpage !== this.state.recPerpage){
-    //   // this.setState((prevState) => ({
-    //   //   data : this.props.data.slice(this.state.startIndex, this.state.endIndex)
-    //   // }))
-    // }
   };
 
   render() {
     const { data } = this.props;
     let records = data.slice(this.state.startIndex, this.state.endIndex);
-    console.log(records);
+    
     return (
       <div>
         <table className="border-separate border-spacing-0 border-slate-500 table-auto">
