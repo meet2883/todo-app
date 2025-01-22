@@ -84,7 +84,7 @@ class TableView extends Component {
   };
 
   componentDidUpdate = (prevProps, prevState) => {
-    
+    console.log(`TableView updated >>>`)
     if (prevProps.todo !== this.props.todo && this.props.isUpdate) {
       this.props.openModel();
     }
@@ -92,6 +92,7 @@ class TableView extends Component {
 
   render() {
     const { data } = this.props;
+  
     let records = data.slice(this.state.startIndex, this.state.endIndex);
     
     return (
